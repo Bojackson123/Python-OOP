@@ -28,7 +28,7 @@ class EmployeeManager:
                 return emp
         raise EmployeeNotFoundError(f"No employee with name: {name_to_find}")
     
-    def remove_employee(self, name_to_remove):
+    def remove_employee(self, name_to_remove:str) -> None:
         self.employees.remove(self.require_by_name(name_to_remove))
     
     def update_salary(self, name:str, new_salary:float) -> None:
