@@ -48,7 +48,7 @@ class FrontendManager():
             self.manager.remove_employee(name)
         except EmployeeNotFoundError as e:
             print(e)
-            self._toast(e, is_error=True)
+            self._toast(str(e), is_error=True)
             return
         
         self.refresh_employee_list()
@@ -65,7 +65,7 @@ class FrontendManager():
         try:
             emp = self.manager.require_by_name(name)
         except EmployeeNotFoundError as e:
-            self._toast(e, is_error=True)
+            self._toast(str(e), is_error=True)
             return
         list_emp = [emp]
         self.display_filtered_employees(list_emp)

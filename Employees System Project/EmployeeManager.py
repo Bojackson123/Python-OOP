@@ -34,7 +34,7 @@ class EmployeeManager:
     def update_salary(self, name:str, new_salary:float) -> None:
         self.require_by_name(name).salary = new_salary
         
-    def delete_by_age_range(self, start:int, stop:int, inclusive:bool = True) -> None:
+    def delete_by_age_range(self, start:int, stop:int, inclusive:bool = True) -> str:
         low = (lambda x: x >= start) if inclusive else (lambda x: x > start)
         hi = (lambda x: x <= stop) if inclusive else (lambda x: x < stop)
         
@@ -53,5 +53,6 @@ class EmployeeManager:
     
     def __len__(self):
         return len(self.employees)
+    
         
         

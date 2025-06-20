@@ -10,7 +10,7 @@ class ERIntake:
     patients: List[Patient] = field(default_factory=list)
     
     def add_patient(self, arrival_time: time, name: str, status: int) -> None:
-        heapq.heappush(self.patients, Patient(arrival_time, name, status))
+        heapq.heappush(self.patients, Patient(status, arrival_time, name))
     
     def next_patient(self) -> Optional[Patient]:
         if self.patients:
@@ -20,7 +20,7 @@ class ERIntake:
     def update_queue(self) -> None:
         heapq.heapify(self.patients)
     
-    def find_by_name(self, name_to_find: str) -> Patient:
+    def find_by_name(self, name_to_find: str) -> Optional[Patient]:
         for pat in self.patients:
             if pat.name == name_to_find:
                 return pat
