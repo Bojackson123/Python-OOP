@@ -10,18 +10,12 @@ class Admin:
     users: Dict[User, List[Book]] = field(default_factory=lambda: defaultdict(list))
     
     # --- Book Operations ---
-    def add_books(self, id:int, name:str, quantity:int) -> str:
-        try:
-            # Check if book with same ID already exists
-            for book_list in self.books.values():
-                for book in book_list:
-                    if book.id == id:
-                        return f"Error: Book with ID {id} already exists!"
-            
-            self.books[name].append(Book(id, name, quantity))
-            return "Book(s) successfully added!"
-        except ValueError as e:
-            return f"Error: {e}"
+    def add_books(self, title:str, copies:int = 1) -> str:
+        for _ in range(copies):
+            self.books[title].append(Book(title))
+        
+        return f"Added {copies} copy(ies) of '{title}'"
+        
     
     def print_books(self) -> None:
         for key, value in self.books.items():
@@ -99,17 +93,13 @@ class Admin:
         return self._find_user_by_name(name) is not None
     
     # --- User Operations ---
-    def add_user(self, id:int, name:str) -> str:
+    def add_user(self, name:str) -> str:
         try:
-            # Check if user with same ID already exists
-            if self._find_user_by_id(id):
-                return f"Error: User with ID {id} already exists!"
-            
             # Check if user with same name already exists
             if self._find_user_by_name(name):
                 return f"Error: User with name '{name}' already exists!"
             
-            self.users[User(id, name)] = []
+            self.users[User(name)] = []
             return "User successfully added!"
         except ValueError as e:
             return f"Error: {e}"
