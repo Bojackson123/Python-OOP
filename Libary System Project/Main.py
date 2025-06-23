@@ -15,9 +15,17 @@ options = [
         "label": "Add User", 
         "function": admin.add_user,
         "prompt_args": ["Enter user name"],
-        "prompt_types": [str]
-        
+        "prompt_types": [str] 
+    },
+    
+    {
+        "label": "Book Inventory",
+        "function": admin.get_book_counts,
+        "list_result": True,
+        "list_labels": ["Title", "Quantity"]
     }
+    
+    
 ]
 
 frontend = FrontendTUI(options, "Libary System Project")

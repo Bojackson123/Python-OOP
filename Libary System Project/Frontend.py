@@ -1,6 +1,4 @@
-
-
-from typing import TypedDict, Callable, Optional, List, Any, Dict
+from typing import TypedDict, Callable, Optional, List, Any, Dict, Type
 import os
 import sys
 
@@ -10,6 +8,9 @@ class Option(TypedDict, total=False):
     args: Optional[List[Any]]                # Static positional arguments (optional)
     kwargs: Optional[Dict[str, Any]]         # Static keyword arguments (optional)
     prompt_args: Optional[List[str]]         # Prompts for runtime positional args (optional)
+    prompt_types: Optional[List[Type]]       # type casting for prompt_args to know what the input from user should be converted to.(Optional)(But required when using prompt_args)
+    list_result: Optional[bool]              # bool if the user wants to list the result of the function (optional)
+    list_labels: Optional[List[str]]         # labels for the list_results table(Optional)(But required when using list_results)
 
 class FrontendTUI:
     def __init__(self, options: List[Option] = [], app_name:str = "My TUI App"):
@@ -105,13 +106,61 @@ class FrontendTUI:
             try:
                 result = option["function"](*static_pos, *runtime_pos, **static_kw)
                 if result:
-                    print(result)
+                    if option.get("list_result"):
+                        if option.get("list_labels"):
+                            if len(result[0]) == len(option["list_labels"]):
+                                self.print_table(result, option["list_labels"])
+                            else:
+                                print(f"\n❌ list_labels must be the same length as result[0]!")
+                        else:
+                            print(f"\n❌ must provide list_labels option to use list_results!")
+                    
+                    else:
+                        print(result)
+                else:
+                    print("\n❌  No data to display.")
             except Exception as e:
                 print(f"\n 💥 Error while executing '{option['label']}': {e}")
             
             if self.running:
                 self.print_footer()        
             
+    def print_table(self, data, labels: list[str]):
+        """
+        Print a table from a list of objects, dicts, tuples, or lists.
+        Uses the provided labels as column headers. Assumes labels are always valid.
+        """
+        if not data:
+            print("No data to display.")
+            return
+
+        rows = []
+
+        # If data is a dict, convert to list of items
+        if isinstance(data, dict):
+            data = list(data.items())
+
+        # Build rows based on the type of the first item
+        if isinstance(data[0], dict):
+            for item in data:
+                rows.append([item.get(h, "") for h in labels])
+        elif hasattr(data[0], "__dict__"):
+            for item in data:
+                rows.append([getattr(item, h, "") for h in labels])
+        elif isinstance(data[0], (tuple, list)):
+            for item in data:
+                rows.append(list(item))
+        else:
+            for item in data:
+                rows.append([item])
+
+        width = 25
+        print("-" * (width * len(labels)))
+        print("".join(f"{h:<{width}}" for h in labels))
+        print("-" * (width * len(labels)))
+        for row in rows:
+            print("".join(f"{str(val):<{width}}" for val in row))
+
             
             
     
